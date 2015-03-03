@@ -1,0 +1,5 @@
+name = EasyDDB Materials Display
+description = Forces materials status and material details be unfolded by default.
+core = 7.x
+version = 7.x-0.1
+package = easyDDB
