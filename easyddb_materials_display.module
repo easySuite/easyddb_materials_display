@@ -5,15 +5,17 @@
  */
 
 /**
- * Implements hook_details_entity_view().
+ * Implements hook_entity_view().
  */
 function easyddb_materials_display_entity_view($entity, $type, $view_mode, $langcode) {
   // Force material details and status field groups be expanded by default.
-  if (isset($entity->content['#groups']['group_material_details']->format_settings)) {
-    $entity->content['#groups']['group_material_details']->format_settings['formatter'] = 'open';
-  }
+  if ($type == 'ting_object' && $view_mode == 'full') {
+    if (isset($entity->content['#groups']['group_material_details']->format_settings)) {
+      $entity->content['#groups']['group_material_details']->format_settings['formatter'] = 'collapsible';
+    }
 
-  if (isset($entity->content['#groups']['group_holdings_available']->format_settings)) {
-    $entity->content['#groups']['group_holdings_available']->format_settings['formatter'] = 'open';
+    if (isset($entity->content['#groups']['group_holdings_available']->format_settings)) {
+      $entity->content['#groups']['group_holdings_available']->format_settings['formatter'] = 'collapsible';
+    }
   }
 }
