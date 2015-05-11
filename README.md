@@ -1,3 +1,2 @@
 # easyDDB Materials Display
-
-Forces materials status and material details field groups be expanded by default.
+Forces the Holdings-table on the itemPage to be expanded by default, and placed before the Details-table.
