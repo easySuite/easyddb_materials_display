@@ -13,6 +13,7 @@ function easyddb_materials_display_entity_view($entity, $type, $view_mode, $lang
     if (isset($entity->content['#groups']['group_holdings_available']->format_settings)) {
       $entity->content['#groups']['group_holdings_available']->format_settings['formatter'] = 'collapsible';
       $entity->content['#groups']['group_holdings_available']->weight = 2;
+      $entity->content['#groups']['group_material_details']->weight = 3;
     }
   }
 }
@@ -25,36 +26,21 @@ function easyddb_materials_display_preprocess_ting_object(&$vars) {
     switch ($vars['elements']['#entity_type']) {
       case 'ting_object':
         $content = $vars['content'];
+
         $vars['content'] = array();
-
-        if (isset($content['group_ting_object_left_column']) && $content['group_ting_object_left_column']) {
-          $vars['content']['ting-object'] = array(
-            '#prefix' => '<div class="ting-object-wrapper">',
-            '#suffix' => '</div>',
-            'content' => array(
-              '#prefix' => '<div class="ting-object-inner-wrapper">',
+          if (isset($content['group_holdings_available']) && $content['group_holdings_available']) {
+            $vars['content']['holdings-available'] = array(
+              '#prefix' => '<div class="ting-object-wrapper">',
               '#suffix' => '</div>',
-              'left_column' => $content['group_ting_object_left_column'],
-              'right_column' => $content['group_ting_object_right_column'],
-            ),
-          );
-
-          unset($content['group_ting_object_left_column']);
-          unset($content['group_ting_object_right_column']);
-        }
-
-        if (isset($content['group_holdings_available']) && $content['group_holdings_available']) {
-          $vars['content']['holdings-available'] = array(
-            '#prefix' => '<div class="ting-object-wrapper">',
-            '#suffix' => '</div>',
-            'content' => array(
-              '#prefix' => '<div class="ting-object-inner-wrapper">',
-              '#suffix' => '</div>',
-              'details' => $content['group_holdings_available'],
-            ),
-          );
-          unset($content['group_holdings_available']);
-        }
+              'content' => array(
+                '#prefix' => '<div class="ting-object-inner-wrapper">',
+                '#suffix' => '</div>',
+                'details' => $content['group_holdings_available'],
+              ),
+              '#weight' => $content['group_material_details']['#weight'],
+            );
+            unset($content['group_holdings_available']);
+          }
 
         if (isset($content['group_material_details']) && $content['group_material_details']) {
           $vars['content']['material-details'] = array(
@@ -65,43 +51,9 @@ function easyddb_materials_display_preprocess_ting_object(&$vars) {
               '#suffix' => '</div>',
               'details' => $content['group_material_details'],
             ),
+            '#weight' => $content['group_material_details']['#weight'],
           );
           unset($content['group_material_details']);
-        }
-
-        if (isset($content['group_periodical_issues']) && $content['group_periodical_issues']) {
-          $vars['content']['periodical-issues'] = array(
-            '#prefix' => '<div class="ting-object-wrapper">',
-            '#suffix' => '</div>',
-            'content' => array(
-              '#prefix' => '<div class="ting-object-inner-wrapper">',
-              '#suffix' => '</div>',
-              'details' => $content['group_periodical_issues'],
-            ),
-          );
-          unset($content['group_periodical_issues']);
-        }
-
-        if (isset($content['group_on_this_site']) && $content['group_on_this_site']) {
-          $vars['content']['on_this_site'] = array(
-            '#prefix' => '<div class="ting-object-wrapper">',
-            '#suffix' => '</div>',
-            'content' => array(
-              '#prefix' => '<div id="ting_reference" class="ting-object-inner-wrapper">',
-              '#suffix' => '</div>',
-              'details' => $content['group_on_this_site'],
-            ),
-          );
-          unset($content['group_on_this_site']);
-        }
-
-        if (isset($content['ting_relations']) && $content['ting_relations']) {
-          $vars['content']['ting-relations'] = array(
-            'content' => array(
-              'details' => $content['ting_relations'],
-            ),
-          );
-          unset($content['ting_relations']);
         }
 
         // Move the reset over if any have been defined in the UI.
