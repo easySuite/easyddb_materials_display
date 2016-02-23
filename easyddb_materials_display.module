@@ -13,6 +13,62 @@ function easyddb_materials_display_entity_view($entity, $type, $view_mode, $lang
     if (isset($entity->content['#groups']['group_holdings_available']->format_settings)) {
       $entity->content['#groups']['group_holdings_available']->format_settings['formatter'] = 'collapsible';
       $entity->content['#groups']['group_holdings_available']->weight = 2;
+      $entity->content['#groups']['group_material_details']->weight = 3;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_ting_object().
+ */
+function easyddb_materials_display_preprocess_ting_object(&$vars) {
+  if (isset($vars['elements']['#view_mode']) && $vars['elements']['#view_mode'] == 'full') {
+    switch ($vars['elements']['#entity_type']) {
+      case 'ting_object':
+        $content = $vars['content'];
+
+        $vars['content'] = array();
+          if (isset($content['group_holdings_available']) && $content['group_holdings_available']) {
+            $vars['content']['holdings-available'] = array(
+              '#prefix' => '<div class="ting-object-wrapper">',
+              '#suffix' => '</div>',
+              'content' => array(
+                '#prefix' => '<div class="ting-object-inner-wrapper">',
+                '#suffix' => '</div>',
+                'details' => $content['group_holdings_available'],
+              ),
+              '#weight' => $content['group_material_details']['#weight'],
+            );
+            unset($content['group_holdings_available']);
+          }
+
+        if (isset($content['group_material_details']) && $content['group_material_details']) {
+          $vars['content']['material-details'] = array(
+            '#prefix' => '<div class="ting-object-wrapper">',
+            '#suffix' => '</div>',
+            'content' => array(
+              '#prefix' => '<div class="ting-object-inner-wrapper">',
+              '#suffix' => '</div>',
+              'details' => $content['group_material_details'],
+            ),
+            '#weight' => $content['group_material_details']['#weight'],
+          );
+          unset($content['group_material_details']);
+        }
+
+        // Move the reset over if any have been defined in the UI.
+        if (!empty($content)) {
+          $vars['content'] += $content;
+        }
+        break;
+
+      case 'ting_collection':
+        // Assumes that field only has one value.
+        foreach ($vars['content']['ting_entities'][0] as &$type) {
+          $type['#prefix'] = '<div class="ting-collection-wrapper"><div class="ting-collection-inner-wrapper">' . $type['#prefix'];
+          $type['#suffix'] = '</div></div>';
+        }
+        break;
     }
   }
 }
