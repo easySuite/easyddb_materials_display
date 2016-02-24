@@ -14,6 +14,7 @@ function easyddb_materials_display_entity_view($entity, $type, $view_mode, $lang
       $entity->content['#groups']['group_holdings_available']->format_settings['formatter'] = 'collapsible';
       $entity->content['#groups']['group_holdings_available']->weight = 2;
       $entity->content['#groups']['group_material_details']->weight = 3;
+      $entity->content['ting_relations']['#weight'] = 4;
     }
   }
 }
@@ -37,7 +38,7 @@ function easyddb_materials_display_preprocess_ting_object(&$vars) {
                 '#suffix' => '</div>',
                 'details' => $content['group_holdings_available'],
               ),
-              '#weight' => $content['group_material_details']['#weight'],
+              '#weight' => $content['group_holdings_available']['#weight'],
             );
             unset($content['group_holdings_available']);
           }
@@ -56,17 +57,19 @@ function easyddb_materials_display_preprocess_ting_object(&$vars) {
           unset($content['group_material_details']);
         }
 
+        if (isset($content['ting_relations']) && $content['ting_relations']) {
+          $vars['content']['ting-relations'] = array(
+            'content' => array(
+              'details' => $content['ting_relations'],
+            ),
+            '#weight' => $content['ting_relations']['#weight'],
+          );
+          unset($content['ting_relations']);
+        }
+
         // Move the reset over if any have been defined in the UI.
         if (!empty($content)) {
           $vars['content'] += $content;
-        }
-        break;
-
-      case 'ting_collection':
-        // Assumes that field only has one value.
-        foreach ($vars['content']['ting_entities'][0] as &$type) {
-          $type['#prefix'] = '<div class="ting-collection-wrapper"><div class="ting-collection-inner-wrapper">' . $type['#prefix'];
-          $type['#suffix'] = '</div></div>';
         }
         break;
     }
