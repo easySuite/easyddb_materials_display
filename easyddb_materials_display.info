@@ -2,4 +2,4 @@ name = easyDDB Materials Display
 package = easyOPAC
 description = Forces materials status and material details to be unfolded by default.
 core = 7.x
-version = 7.x-2.4.4+easy
+version = 7.x-3.0.2
